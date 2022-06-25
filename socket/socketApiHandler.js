@@ -15,8 +15,10 @@ module.exports = class SocketApiHandler {
             const apisDir = __dirname + '/apis';
             const files = await readdir(apisDir);
             for(let i in files) {
-                const modelName = files[i].split('.')[0];
-                if (!(modelName === 'apiBase')) {
+                const split = files[i].split('.');
+                const modelName = split[0];
+                const extension = split[1];
+                if (extension === 'js' && !(modelName === 'apiBase')) {
                     const apiModel = require(`./apis/${files[i]}`);
                     const api = new apiModel();
                     const apiName = api.getApiName();

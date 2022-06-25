@@ -5,8 +5,10 @@ exports.controllerInit = () => {
         fs.readdir(__dirname, async (err, files) => {
             const controllerNames = [];
             for (let i in files) {
-                const controllerName = files[i].split('.')[0];
-                if (!(controllerName === 'index' || controllerName === 'controllerBase')) {
+                const split = files[i].split('.');
+                const controllerName = split[0];
+                const extension = split[1];
+                if (extension === 'js' && !(controllerName === 'index' || controllerName === 'controllerBase')) {
                     controllerNames.push(controllerName);
                 }
             }

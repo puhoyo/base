@@ -5,8 +5,10 @@ exports.routerInit = () => {
         fs.readdir(__dirname, (err, files) => {
             const routerNames = [];
             for (let i in files) {
-                const routerName = files[i].split('.')[0];
-                if (!(routerName === 'routers' || routerName === 'middlewares')) {
+                const split = files[i].split('.');
+                const routerName = split[0];
+                const extension = split[1];
+                if (extension === 'js' && !(routerName === 'routers' || routerName === 'middlewares')) {
                     routerNames.push(routerName);
                 }
             }
