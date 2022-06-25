@@ -1,4 +1,4 @@
-const express = require('express');
+import express, {Request, Response, NextFunction, ErrorRequestHandler} from 'express';
 const morgan = require('morgan');
 const path = require('path');
 const nunjucks = require('nunjucks');
@@ -7,12 +7,12 @@ const helmet = require('helmet');
 const hpp = require('hpp');
 
 dotenv.config();
-const {dbSync} = require('./models');
+const {dbSync} = require('../models');
 // const mongoDB = require('./schemas');
 
-const {controllerInit} = require('./controllers');
-const {routerInit} = require('./routes/routers');
-const logger = require('./logger');
+const {controllerInit} = require('../controllers');
+const {routerInit} = require('../routes/routers');
+const logger = require('../logger');
 
 
 const axios = require('axios').default;
@@ -29,34 +29,34 @@ nunjucks.configure('views', {
     watch: true,
 });
 
-const config = require('./config/config');
+const config = require('../config/config');
 if(process.env.NODE_ENV === 'production') config.database.mysql.logging = false; //do not mysql logging on production
 for(let key in config) {
     //set config data to app if config data is not object type
     if(config.hasOwnProperty(key) && typeof config[key] !== 'object') app.set(key, config[key]);
 }
 dbSync()
-    .then(db => {
+    .then((db: {sequelize: any}) => {
         app.set('db', db);
         return db.sequelize.sync({force: false});
     })
     .then(async () => {
         console.log('database connection');
         if(app.get('useRedis')) {
-            const redisClient = require('./models/redis')(config.database.redis.url, config.database.redis.database);
+            const redisClient = require('../models/redis')(config.database.redis.url, config.database.redis.database);
             app.set('redisClient', redisClient);
             await redisClient.connect();
             console.log('redisClient connection');
         }
-        const restApiHandler = require('./restApi/restApiHandler');
+        const restApiHandler = require('../restApi/restApiHandler');
         app.set('restApiHandler', new restApiHandler());
         if(app.get('useSocket')) {
-            const socketApiHandler = require('./socket/socketApiHandler');
+            const socketApiHandler = require('../socket/socketApiHandler');
             app.set('socketApiHandler', new socketApiHandler());
         }
         return controllerInit();
     })
-    .then(controllers => {
+    .then((controllers: any) => {
         for(let controllerName in controllers) {
             if(controllers.hasOwnProperty(controllerName)) {
                 app.set(controllerName, controllers[controllerName]);
@@ -64,7 +64,7 @@ dbSync()
         }
         return routerInit();
     })
-    .then(routers => {
+    .then((routers: any) => {
         app.use('/', (req, res, next) => {
             // res.header('Access-Control-Allow-Origin', '*');
             next();
@@ -77,13 +77,13 @@ dbSync()
         }
 
         app.use((req, res, next) => {
-            const error = new Error(`${req.method} ${req.url} router is not defined.`);
+            const error: any = new Error(`${req.method} ${req.url} router is not defined.`);
             error.status = 404;
             logger.error(new Date());
             logger.error(error.message);
             next(error);
         });
-        app.use((err, req, res, next) => {
+        app.use((err: { message: any; status: any; }, req: Request, res: Response, next: NextFunction) => {
             res.locals.message = err.message;
             res.locals.error = process.env.NODE_ENV !== 'production' ? err : {};
             res.status(err.status || 500);
@@ -93,7 +93,7 @@ dbSync()
         app.set('ready', true);
         console.log('server ready');
     })
-    .catch(err => {
+    .catch((err: any) => {
         console.error(err);
     });
 

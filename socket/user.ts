@@ -1,19 +1,25 @@
 const jwt = require('jsonwebtoken');
-const Sequelize = require('sequelize');
 const _ = require('lodash');
 
 module.exports = class User {
-    constructor(socket, token) {
+    userId: number;
+    socket: {
+        send: any;
+        request: {
+            app: any;
+        };
+    };
+    constructor(socket: { send: any, request: { app: any; }; }, token: any) {
         this.socket = socket;
-        this.app = socket.request.app;
 
         try {
             if(token) {
-                const decoded = jwt.verify(token, process.env.JWT_SECRET);
+                const decoded: any = jwt.verify(token, process.env.JWT_SECRET);
                 this.userId = decoded.i;
             }
             else {
-                this.app.get('logger').error('token is not defined');
+                this.socket.request.app.get('logger').error('token is not defined');
+                this.userId = 0;
             }
         }
         catch(error) {
@@ -22,15 +28,13 @@ module.exports = class User {
     }
 
     destroy() {
-        if(this.socket) {
-            this.socket = null;
-        }
+        
     }
     getRedisKeyName() {
         return `session:${this.userId}`;
     }
     deleteSession() {
-        const redisClient = this.app.get('redisClient');
+        const redisClient = this.socket.request.app.get('redisClient');
         redisClient.DEL(this.getRedisKeyName());
     }
 
@@ -41,7 +45,7 @@ module.exports = class User {
         return this.userId;
     }
 
-    send(data) {
+    send(data: any) {
         if(this.socket) {
             this.socket.send(data);
             return true;

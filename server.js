@@ -1,4 +1,4 @@
-const app = require('./app');
+const app = require('./build/app');
 console.log('end app');
 const webSocket = require('./socket/socket');
 
