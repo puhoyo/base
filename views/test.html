@@ -1,0 +1,33 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<button id="test" style="width: 200px; height: 100px; font-size: xx-large; color: crimson; position: absolute; top: 50px; left: 50px;">test</button>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+  const socket = io.connect('http://localhost:8017', {
+    path: '/socket.io', auth: {token: '1234'}
+  });
+  
+  //for test
+  socket.on('message', function(data) {
+    console.log('received:', data);
+  });
+  socket.on('broadcast', function(data) {
+    console.log('broadcast data received(LOBBY):', data);
+  });
+
+  document.querySelector('#test').addEventListener('click', () => {
+      socket.send({pid: 'test', data: {}});
+  });
+</script>
+{% endblock %}
+
+{% block script %}
+<script>
+  window.onload = () => {
+    if (new URL(location.href).searchParams.get('error')) {
+      alert(new URL(location.href).searchParams.get('error'));
+    }
+  };
+</script>
+{% endblock %}
