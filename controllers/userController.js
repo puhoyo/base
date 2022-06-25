@@ -7,4 +7,8 @@ module.exports = class UserController extends ControllerBase {
     constructor() {
         super();
     }
+
+    async init() {
+        return;
+    }
 }
