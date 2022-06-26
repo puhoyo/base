@@ -1,6 +1,6 @@
-import express, {Request, Response, NextFunction, ErrorRequestHandler} from 'express';
-const morgan = require('morgan');
-const path = require('path');
+import express from 'express';
+import morgan from 'morgan';
+import {join} from 'path';
 const nunjucks = require('nunjucks');
 const dotenv = require('dotenv');
 const helmet = require('helmet');
@@ -81,12 +81,9 @@ dbSync()
             error.status = 404;
             logger.error(new Date());
             logger.error(error.message);
-            next(error);
-        });
-        app.use((err: { message: any; status: any; }, req: Request, res: Response, next: NextFunction) => {
-            res.locals.message = err.message;
-            res.locals.error = process.env.NODE_ENV !== 'production' ? err : {};
-            res.status(err.status || 500);
+            res.locals.message = error.message;
+            res.locals.error = process.env.NODE_ENV !== 'production' ? error : {};
+            res.status(error.status || 500);
             res.send('error');
         });
 
@@ -105,7 +102,7 @@ if(process.env.NODE_ENV === 'production') {
 else {
     app.use(morgan('dev'));
 }
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(join(__dirname, 'public')));
 app.use(express.json());
 app.use(express.urlencoded({extended: false}));
 

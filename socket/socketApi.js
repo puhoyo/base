@@ -1,5 +1,5 @@
 const logger = require('../logger');
-const serverUtil = require('../build/lib/serverUtil');
+const serverUtil = require('../dist/lib/serverUtil');
 
 exports.socketApi = async (socket, packet) => {
     console.log('packet: ', packet);

@@ -1,5 +1,5 @@
 const SocketIO = require('socket.io');
-const User = require('../build/socket/user');
+const User = require('../dist/socket/user');
 const {socketApi} = require('./socketApi');
 
 module.exports = (server, app) => {

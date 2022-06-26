@@ -4,14 +4,14 @@ const rateLimit = require('express-rate-limit');
 exports.verifyToken = (req, res, next) => {
     try {
         if(process.env.NODE_ENV === 'local') {
-            req.userId = 1;
+            res.locals.userId = 1;
         }
         else {
             const {token} = req.body;
             if (!token) res.send(new Error('token is not defined'));
             const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-            req.userId = decoded.i;
+            res.locals.userId = decoded.i;
         }
         return next();
     }

@@ -1,20 +1,22 @@
-import jwt from 'jsonwebtoken';
-
+import {verify} from 'jsonwebtoken';
+interface JwtPayload {
+    i: string;
+}
+interface Socket {
+    request: any;
+    send: any;
+}
 export class User {
     userId: number;
-    socket: {
-        send: any;
-        request: {
-            app: any;
-        };
-    };
-    constructor(socket: { send: any, request: { app: any; }; }, token: any) {
+    socket: Socket;
+
+    constructor(socket: Socket, token: string) {
         this.socket = socket;
 
         try {
             if(token) {
-                const decoded: any = jwt.verify(token, process.env.JWT_SECRET);
-                this.userId = decoded.i;
+                const decoded = verify(token, process.env.JWT_SECRET) as JwtPayload;
+                this.userId = parseInt(decoded.i);
             }
             else {
                 this.socket.request.app.get('logger').error('token is not defined');

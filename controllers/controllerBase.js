@@ -1,6 +1,6 @@
 module.exports = class controllerBase {
     constructor() {
-        this.app = require('../build/app');
+        this.app = require('../dist/app');
         this.db = this.app.get('db');
         this.redisClient = this.app.get('redisClient');
         this.sequelize = this.db.sequelize;

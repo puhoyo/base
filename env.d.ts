@@ -5,5 +5,8 @@ declare global {
         NODE_ENV: 'local' | 'development' | 'production';
       }
     }
+    interface User {
+      userId: number;
+    }
   }
   export {}
