@@ -1,7 +1,6 @@
-const jwt = require('jsonwebtoken');
-const _ = require('lodash');
+import jwt from 'jsonwebtoken';
 
-module.exports = class User {
+export class User {
     userId: number;
     socket: {
         send: any;

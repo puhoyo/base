@@ -1,5 +1,5 @@
 const logger = require('../logger');
-const serverUtil = require('../lib/serverUtil');
+const serverUtil = require('../build/lib/serverUtil');
 
 exports.restApi = async (req, res, next) => {
     const apiName = req.body.api;

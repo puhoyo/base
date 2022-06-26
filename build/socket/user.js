@@ -1,12 +1,16 @@
 "use strict";
-const jwt = require('jsonwebtoken');
-const _ = require('lodash');
-module.exports = class User {
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.User = void 0;
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+class User {
     constructor(socket, token) {
         this.socket = socket;
         try {
             if (token) {
-                const decoded = jwt.verify(token, process.env.JWT_SECRET);
+                const decoded = jsonwebtoken_1.default.verify(token, process.env.JWT_SECRET);
                 this.userId = decoded.i;
             }
             else {
@@ -41,4 +45,5 @@ module.exports = class User {
         else
             return false;
     }
-};
+}
+exports.User = User;
